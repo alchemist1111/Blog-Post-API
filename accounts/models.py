@@ -1,6 +1,7 @@
 from django.db import models
 from .managers import UserManager
 from django.contrib.auth.models import AbstractUser
+from posts.models import TimeStampedModel
 import uuid
 
 # Custom User model
@@ -34,5 +35,25 @@ class User(AbstractUser):
         ]
     
     def __str__(self):
-        return f"{self.full_name} <{self.email}>"    
+        return f"{self.full_name} <{self.email}>"  
+
+
+# User Profile model
+class UserProfile(TimeStampedModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    display_name = models.CharField(max_length=255, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+    avatar = models.ImageField(upload_to="user_profiles/avatars/", blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
+    twitter = models.URLField(blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
+    github = models.URLField(blank=True, null=True)       
     
+    class Meta:
+        db_table = 'user_profiles'
+        
+        ordering = ["display_name"]
+        
+    def __str__(self):
+        return self.display_name if self.display_name else self.user.full_name
