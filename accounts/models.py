@@ -13,6 +13,7 @@ class User(AbstractUser):
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    deleted_at = models.DateTimeField(null=True, blank=True, default=None)
     
     # Use email as the unique identifier for authentication
     USERNAME_FIELD = 'email'
