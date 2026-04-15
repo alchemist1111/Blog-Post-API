@@ -9,6 +9,10 @@ class UserManager(BaseUserManager):
     def get_queryset(self):
         return super().get_queryset().filter(deleted_at__isnull=True) # Override the default queryset to exclude soft-deleted users
     
+    def all_with_deleted(self):
+        """Return all users including soft-deleted ones. For admin use only."""
+        return super().get_queryset()
+    
     # Create a regular user
     def create_user(self, email, password, **extra_fields):
         if not email:
