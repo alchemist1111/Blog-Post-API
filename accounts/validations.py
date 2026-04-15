@@ -1,5 +1,5 @@
 import re
-from django.core.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError
 from django.core.validators import EmailValidator
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -10,7 +10,7 @@ User = get_user_model()
 # Validate full name
 def validate_full_name(value):
     """Validates the full name field for user registration and profile updates."""
-    if value == " ":
+    if not value or not value.strip():
         raise ValidationError("Full name cannot be empty.")
     if len(value) < 8:
         raise ValidationError("Full name must be at least 8 characters long.")
@@ -25,7 +25,7 @@ def validate_email(value):
     """Validate that the email is not empty, proper format, and unique."""
     
     # Check for empty email
-    if value == " ":
+    if not value or not value.strip():
         raise ValidationError("Email cannot be empty.") # Email cannot be empty
     
     # Validate email format
@@ -47,7 +47,7 @@ def validate_password(value):
     """Validate that the password is not empty, meets complexity requirements, and is of valid length."""
     
     # Check for empty password
-    if value == " ":
+    if not value or not value.strip():
         raise ValidationError("Password cannot be empty.") # Password cannot be empty
     
     # Cjeck for minimum length
@@ -64,7 +64,7 @@ def validate_password(value):
         raise ValidationError("Password must contain at least one uppercase letter.") # Password must contain at least one uppercase letter
     if not re.search(r'[a-z]', value):
         raise ValidationError("Password must contain at least one lowercase letter.") # Password must contain at least one lowercase letter
-    if not re.search(r'[1-9]', value):
+    if not re.search(r'[0-9]', value):
         raise ValidationError("Password must contain at least one digit.") # Password must contain at least one digit
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', value):
         raise ValidationError("Password must contain at least one special character.") # Password must contain at least one special character
