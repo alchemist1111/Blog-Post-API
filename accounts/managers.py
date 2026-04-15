@@ -1,10 +1,15 @@
 from django.contrib.auth.models import BaseUserManager
+from django.utils import timezone
 
 # Class for the Base Custom User Manager
 class UserManager(BaseUserManager):
     """"
-         Create and return a user with an email and password.
+        Custom user manager to handle user creation and soft deletion.
     """
+    def get_queryset(self):
+        return super().get_queryset().filter(deleted_at__isnull=True) # Override the default queryset to exclude soft-deleted users
+    
+    # Create a regular user
     def create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError("The Email field must be set")
@@ -26,3 +31,9 @@ class UserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self.create_user(email, password, **extra_fields)
+    
+    # Soft delete
+    def soft_delete(self, user):
+        """Soft delete a user by setting deleted_at to the current timestamp."""
+        user.deleted_at = timezone.now()
+        user.save(update_fields=['deleted_at'])
