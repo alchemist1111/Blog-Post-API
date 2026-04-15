@@ -10,6 +10,8 @@ from .serializers import (
     UserSerializer, 
     UserRegistrationSerializer, 
     UserAdminSerializer,
+    UserProfileSerializer,
+    UserProfileUpdateSerializer,
 )
 import logging
 
@@ -231,4 +233,93 @@ class AdminUserDetailView(APIView):
                 "error": str(e)
             }
             logger.error(f"An error occurred while retrieving user details: {str(e)}")
+            return Response(exception_error_message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)     
+
+
+# User Profile view
+class UserProfileRetrieveView(APIView):
+    """Handle retrieval of the authenticated user's own profile."""
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfileSerializer
+    
+    def get(self, request):
+        try:
+            profile = get_object_or_404(UserProfile, user=request.user)
+            serializer = self.serializer_class(profile)
+            success_message = {
+                "message": "User profile retrieved successfully.",
+                "profile": serializer.data
+            }
+            logger.info(f"User profile retrieved for: {request.user.email}")
+            return Response(success_message, status=status.HTTP_200_OK)
+        except Exception as e:
+            exception_error_message = {
+                "message": "An error occurred while retrieving user profile.",
+                "error": str(e)
+            }
+            logger.error(f"An error occurred while retrieving user profile: {str(e)}")
+            return Response(exception_error_message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# User Profile update view
+class UserProfileUpdateView(APIView):
+    """Handle full or partial update of the authenticated user's own profile."""
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfileUpdateSerializer
+    
+    def put(self, request):
+        """Handle full update of the authenticated user's own profile."""
+        try:
+            profile = get_object_or_404(UserProfile, user=request.user)
+            serializer = self.serializer_class(profile, data=request.data)
+            
+            if serializer.is_valid():
+                profile = serializer.save()
+                success_message = {
+                    "message": "User profile updated successfully.",
+                    "profile": UserProfileSerializer(profile).data
+                }
+                logger.info(f"User profile updated for: {request.user.email}")
+                return Response(success_message, status=status.HTTP_200_OK)
+            else:
+                error_message = {
+                    "message": "User profile update failed.",
+                    "errors": serializer.errors
+                }
+                logger.warning(f"User profile update failed: {serializer.errors}")
+                return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            exception_error_message = {
+                "message": "An error occurred while updating user profile.",
+                "error": str(e)
+            }
+            logger.error(f"An error occurred while updating user profile: {str(e)}")
+            return Response(exception_error_message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def patch(self, request):
+        """Handle partial update of the authenticated user's own profile."""
+        try:
+            profile = get_object_or_404(UserProfile, user=request.user)
+            serializer = self.serializer_class(profile, data=request.data, partial=True)
+            
+            if serializer.is_valid():
+                profile = serializer.save()
+                success_message = {
+                    "message": "User profile partially updated successfully.",
+                    "profile": UserProfileSerializer(profile).data
+                }
+                logger.info(f"User profile partially updated for: {request.user.email}")
+                return Response(success_message, status=status.HTTP_200_OK)
+            else:
+                error_message = {
+                    "message": "User profile partial update failed.",
+                    "errors": serializer.errors
+                }
+                logger.warning(f"User profile partial update failed: {serializer.errors}")
+                return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            exception_error_message = {
+                "message": "An error occurred while partially updating user profile.",
+                "error": str(e)
+            }
+            logger.error(f"An error occurred while partially updating user profile: {str(e)}")
             return Response(exception_error_message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)            
