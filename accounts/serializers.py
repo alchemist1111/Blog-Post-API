@@ -31,7 +31,15 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_email(self, value):
         if self.instance:
             return validate_no_email_change(self.instance, value) # Prevent email change on profile update
-        return validate_email(value) 
+        return validate_email(value)
+
+
+# User admin 
+class UserAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'full_name', 'email', 'is_active', 'is_staff', 'created_at', 'updated_at', 'deleted_at']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'deleted_at']     
 
 # User registration serializer
 class UserRegistrationSerializer(serializers.ModelSerializer):
