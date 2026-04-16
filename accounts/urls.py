@@ -12,7 +12,7 @@ from .views import (
 )
 
 
-url_patterns = [
+urlpatterns = [
     # User registration
     path('register/', UserRegistrationView.as_view(), name='user-register'),
     
