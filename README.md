@@ -370,5 +370,5 @@ This project is licensed under the **MIT License** — see the `LICENSE` file fo
 ## Project URL
 project URL
 ```bash
-      https://github.com/alchemist1111/Blog-Post-API.git
+      https://roadmap.sh/projects/blogging-platform-api
  ```
