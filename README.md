@@ -367,7 +367,8 @@ This project is licensed under the **MIT License** — see the `LICENSE` file fo
 
 ---
 
-## Project Url
+## Project URL
+project URL
 ```bash
- project page URL: https://github.com/alchemist1111/Blog-Post-API.git
+      https://github.com/alchemist1111/Blog-Post-API.git
  ```
